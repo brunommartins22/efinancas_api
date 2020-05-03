@@ -1,0 +1,9 @@
+﻿<service>
+    <id>Syscontabil</id>
+    <name>Syscontabil</name>
+    <description>Sistema de configuração fiscal de produtos</description>
+    <env name="MYAPP_HOME" value="%BASE%"/>
+    <executable>java</executable>
+    <arguments>-Xmx256m -jar "%BASE%\syscontabilapi-1.0-SNAPSHOT.jar"</arguments>
+    <logmode>rotate</logmode>
+</service>

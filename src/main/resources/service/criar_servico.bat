@@ -1,0 +1,1 @@
+%~dp0\efinancas_api-1.0-SNAPSHOT.exe install

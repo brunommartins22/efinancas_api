@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+
+    <changeSet id="inserting data into the system table" author="bruno_martins"   runOnChange="true">
+        
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">select count(*) from seguranca.sistema where id = 1</sqlCheck>
+        </preConditions>
+        
+        <sql splitStatements="true" dbms="postgresql">
+            
+            INSERT INTO 
+            seguranca.sistema (id, dominio_grupo_sistema,nome_sistema) 
+            VALUES (1, 'EFINANCAS', 'E-Financas');
+        
+        </sql>
+    
+    </changeSet>
+    
+    <changeSet id="create domain dominio_tipo_operadora_telefone" author="bruno_martins"   runOnChange="true">
+        
+        <preConditions onFail="MARK_RAN">            
+            <sqlCheck expectedResult="0">
+                SELECT count(*) FROM pg_catalog.pg_type WHERE typname = 'DominioTipoOperadoraTelefone'
+            </sqlCheck>            
+        </preConditions>
+        
+        <sql splitStatements="true" dbms="postgresql">
+            
+            CREATE DOMAIN efinancas."DominioTipoOperadoraTelefone"
+            AS character varying(5)
+            CONSTRAINT "DominioTipoOperadoraTelefone" CHECK (value in ('OI','TIM','VIVO','CLARO'));
+            ALTER DOMAIN efinancas."DominioTipoOperadoraTelefone"
+            OWNER TO bmm;
+        
+        </sql>
+
+    </changeSet>
+    
+    <changeSet id="create domain dominio_tipo_telefone" author="bruno_martins"   runOnChange="true">
+        
+        <preConditions onFail="MARK_RAN">            
+            <sqlCheck expectedResult="0">
+                SELECT count(*) FROM pg_catalog.pg_type WHERE typname = 'DominioTipoTelefone'
+            </sqlCheck>            
+        </preConditions>
+        
+        <sql splitStatements="true" dbms="postgresql">
+            
+            CREATE DOMAIN efinancas."DominioTipoTelefone"
+            AS character varying(7)
+            CONSTRAINT "DominioTipoTelefone" CHECK (value in ('CELULAR','FIXO'));
+            ALTER DOMAIN efinancas."DominioTipoTelefone"
+            OWNER TO bmm;
+       
+        </sql>
+
+    </changeSet>
+
+    <changeSet id="alter type columns tipo_operadora,tipo_telefone on table telefone" author="bruno_martins" runOnChange="true">
+       
+        <sql splitStatements="true" dbms="postgresql">
+            
+            ALTER TABLE efinancas.telefone
+            ALTER COLUMN tipo_operadora TYPE efinancas."DominioTipoOperadoraTelefone",
+            ALTER COLUMN tipo_telefone TYPE efinancas."DominioTipoTelefone",
+            ALTER COLUMN ativo TYPE seguranca."DominioAtivo";
+          
+        </sql>
+
+    </changeSet>
+    
+    <changeSet id="alter type column ativo on table endereco" author="bruno_martins" runOnChange="true">
+       
+        <sql splitStatements="true" dbms="postgresql">
+            
+            ALTER TABLE efinancas.endereco
+            ALTER COLUMN ativo TYPE seguranca."DominioAtivo";
+          
+        </sql>
+
+    </changeSet>
+    
+    <changeSet id="alter type column tipo_pessoa on table pessoa" author="bruno_martins" runOnChange="true">
+       
+        <sql splitStatements="true" dbms="postgresql">
+            
+            ALTER TABLE efinancas.pessoa
+            ALTER COLUMN tipo_pessoa TYPE seguranca."DominioTipoPessoa";
+          
+        </sql>
+
+    </changeSet>
+        
+   
+    <changeSet id="alter type column ativo on table cliente" author="bruno_martins" runOnChange="true">
+       
+        <sql splitStatements="true" dbms="postgresql">
+            
+            ALTER TABLE efinancas.cliente
+            ALTER COLUMN ativo TYPE seguranca."DominioAtivo";
+          
+        </sql>
+
+    </changeSet>
+
+ 
+</databaseChangeLog>
